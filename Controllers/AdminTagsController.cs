@@ -67,5 +67,33 @@ namespace Blog.MVC.Controllers
 
             return View(null);
         }
+
+        [HttpPost]
+        public IActionResult Edit(EditTagRequest editTagRequest)
+        {
+            var tag = new Tag
+            {
+                Id = editTagRequest.Id,
+                Name = editTagRequest.Name,
+                DisplayName = editTagRequest.DisplayName
+            };
+
+            var existingTag = _bloggieDbContext.Tags.Find(tag.Id);
+
+            if(existingTag != null)
+            {
+                existingTag.Name = tag.Name;
+                existingTag.DisplayName = tag.DisplayName;
+
+                // save changes
+
+                _bloggieDbContext.SaveChanges();
+
+                //Show success notification
+                return RedirectToAction("Edit", new { id = editTagRequest.Id });
+            }
+            //Show error notification
+            return RedirectToAction("Edit", new {id = editTagRequest.Id});
+        }
     }
 }
