@@ -31,15 +31,41 @@ namespace Blog.MVC.Controllers
             });
             _bloggieDbContext.SaveChanges();
 
-            return View("Add");
+            return RedirectToAction("List");
         }
 
         [HttpGet]
+        [ActionName("List")]
         public IActionResult List()
         {
             var tags = _bloggieDbContext.Tags.ToList();
 
             return View(tags);
+        }
+
+        [HttpGet]
+        [ActionName("Edit")]
+        public IActionResult Edit(Guid id)
+        {
+            // 1st method
+            //var tag = _bloggieDbContext.Tags.Find(id);
+
+            // 2nd method
+            var tag = _bloggieDbContext.Tags.FirstOrDefault(x => x.Id == id);
+
+            if(tag != null)
+            {
+                var editTagRequest = new EditTagRequest
+                {
+                    Id = tag.Id,
+                    Name = tag.Name,
+                    DisplayName = tag.DisplayName
+                };
+
+                return View(editTagRequest);
+            }
+
+            return View(null);
         }
     }
 }
